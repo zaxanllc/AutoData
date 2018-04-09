@@ -1,0 +1,43 @@
+<% @title = 'Your Cars' %>
+<h1><%= @title %></h1>
+
+<% if @cars.empty? %>
+  <p>
+    Your account doesn't have any cars associated with it yet.  Start
+    by <%= link_to('creating one', new_car_path) %>.
+  </p>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Last MPG</th>
+      <th>Cost Per Mile</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  
+  <tbody>
+    <% @cars.each do |car| %>
+      <% refuel = car.refuels.most_recent.first %>
+
+      <tr>
+        <td><%= link_to(car.name, edit_car_path(car)) %></td>
+        <td><%= refuel && refuel.formatted_mpg %></td>
+        <td><%= refuel && refuel.cost_per_mile.try(:format) %></td>
+        <td><%= link_to('Refuel', new_car_refuel_path(car)) %></td>
+        <td><%= link_to('History', car_refuels_path(car)) %></td>
+        <td><%= link_to('Delete', car_path(car), :method => :delete, :confirm => 'Are you sure?') %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<% if !@cars.empty? %>
+  <%= link_to('Create a new car', new_car_path) %><br/>
+<% end %>
+
+<%= link_to('Log out', logout_path) %>
